@@ -35,7 +35,7 @@ class TimeStats():
         print()
 
 class TimeMeasure():
-    TIME_STATS = None
+    TIME_STATS = TimeStats()
     def __init__(self, name='default', time_stats=None, verbose=False):
         self._name = name
         self._time_s = 0
@@ -62,3 +62,7 @@ class TimeMeasure():
     @classmethod
     def register_global_timestats(cls, time_stats):
         cls.TIME_STATS = time_stats
+
+    @classmethod
+    def print_all(cls):
+        cls.TIME_STATS.print_all()
