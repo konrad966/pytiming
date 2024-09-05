@@ -36,6 +36,7 @@ class TimeStats():
 
 class TimeMeasure():
     TIME_STATS = TimeStats()
+    SYNC_FUN = None
     def __init__(self, name='default', time_stats=None, verbose=False):
         self._name = name
         self._time_s = 0
@@ -48,16 +49,24 @@ class TimeMeasure():
             self._time_stats = time_stats
          
     def __enter__(self):
+        if self.SYNC_FUN is not None:
+            self.SYNC_FUN()
         self._time_s = time.time()
         return self
     
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.SYNC_FUN is not None:
+            self.SYNC_FUN()
         self._time_e = time.time()
         self._interval = self._time_e - self._time_s
         if self._verbose:
             print(f'{self._name} took {self._interval:.5f} sec')
         if self._time_stats is not None:
             self._time_stats.log_time(self._name, self._interval)
+
+    @classmethod
+    def set_sync_fun(cls, sync_fun):
+        cls.SYNC_FUN = sync_fun
 
     @classmethod
     def register_global_timestats(cls, time_stats):
